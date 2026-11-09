@@ -105,4 +105,42 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  /* ---------- 6. Lightbox galeri (gallery.blade.php) ---------- */
+  var lightbox = document.getElementById('galleryLightbox');
+  if (lightbox) {
+    var lightboxImage = lightbox.querySelector('[data-lightbox-image]');
+    var lightboxText = lightbox.querySelector('[data-lightbox-text]');
+    var lastFocused = null;
+
+    function openLightbox(card) {
+      lastFocused = card;
+      lightboxImage.src = card.getAttribute('data-lightbox-src');
+      lightboxImage.alt = card.getAttribute('data-lightbox-caption') || '';
+      lightboxText.textContent = card.getAttribute('data-lightbox-caption') || '';
+      lightbox.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      lightbox.querySelector('[data-lightbox-close]').focus();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      // Release the image so a large file isn't held in memory while closed.
+      lightboxImage.src = '';
+      if (lastFocused) lastFocused.focus();
+    }
+
+    document.querySelectorAll('.gallery-card[data-lightbox-src]').forEach(function (card) {
+      card.addEventListener('click', function () { openLightbox(card); });
+    });
+
+    lightbox.querySelectorAll('[data-lightbox-close], [data-lightbox-backdrop]').forEach(function (closer) {
+      closer.addEventListener('click', closeLightbox);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !lightbox.classList.contains('hidden')) closeLightbox();
+    });
+  }
+
 });

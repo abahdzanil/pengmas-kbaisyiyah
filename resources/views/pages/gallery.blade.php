@@ -26,21 +26,38 @@
     </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      @foreach ($photos as $i => $photo)
-        <div class="gallery-card {{ $i % 2 === 0 ? 'bg-forest-100 border border-forest-200' : 'bg-sand-200 border border-sand-300' }} aspect-square flex flex-col items-center justify-center gap-2 text-center px-4" data-category="{{ $photo->category?->slug }}">
-          @if ($photo->image_path)
-            <img src="{{ Storage::url($photo->image_path) }}" alt="{{ $photo->caption }}" class="w-full h-full object-cover">
-          @else
-            <x-icon name="camera" :size="22" :stroke="$i % 2 === 0 ? '#2f5d40' : '#9c7838'" />
-            <p class="text-xs font-semibold {{ $i % 2 === 0 ? 'text-forest-700' : 'text-sand-700' }}">{{ $photo->caption }}</p>
-          @endif
-        </div>
+      @foreach ($photos as $photo)
+        <button type="button"
+          class="gallery-card group relative aspect-square overflow-hidden border border-sand-300 bg-sand-100"
+          data-category="{{ $photo->category?->slug }}"
+          data-lightbox-src="{{ Storage::url($photo->image_path) }}"
+          data-lightbox-caption="{{ $photo->caption }}"
+          aria-label="Lihat foto: {{ $photo->caption }}">
+          <img src="{{ Storage::url($photo->image_path) }}" alt="{{ $photo->caption }}"
+            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+          <span class="absolute inset-x-0 bottom-0 bg-forest-900/75 text-sand-50 text-xs font-semibold px-3 py-2 text-left opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity">
+            {{ $photo->caption }}
+          </span>
+        </button>
       @endforeach
     </div>
 
     @if ($photos->isEmpty())
       <p class="text-sm text-ink/50">Belum ada foto kegiatan yang ditambahkan.</p>
     @endif
+
+    {{-- Lightbox: dibuka saat kartu galeri diklik (lihat public/js/app.js) --}}
+    <div id="galleryLightbox" class="hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Pratinjau foto">
+      <div data-lightbox-backdrop class="absolute inset-0 bg-ink/80"></div>
+      <div class="relative h-full flex items-center justify-center p-4 sm:p-8">
+        <button type="button" data-lightbox-close aria-label="Tutup"
+          class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 flex items-center justify-center text-sand-50/70 hover:text-sand-50 text-3xl leading-none">&times;</button>
+        <figure class="max-w-4xl w-full">
+          <img data-lightbox-image src="" alt="" class="w-full max-h-[75vh] object-contain bg-ink/40">
+          <figcaption data-lightbox-text class="mt-4 text-center text-sm text-sand-50"></figcaption>
+        </figure>
+      </div>
+    </div>
   </div>
 </section>
 

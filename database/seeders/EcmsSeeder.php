@@ -9,7 +9,6 @@ use App\Models\Facility;
 use App\Models\Feature;
 use App\Models\GalleryCategory;
 use App\Models\MissionPoint;
-use App\Models\Photo;
 use App\Models\SectionContent;
 use App\Models\SiteSetting;
 use App\Models\StaffMember;
@@ -233,40 +232,18 @@ class EcmsSeeder extends Seeder
             'kreativitas' => 'Kreativitas',
             'outdoor' => 'Outdoor',
         ];
-        $categoryIds = [];
         $i = 1;
         foreach ($categories as $slug => $name) {
-            $categoryIds[$slug] = GalleryCategory::query()->create([
+            GalleryCategory::query()->create([
                 'name' => $name,
                 'slug' => $slug,
                 'sort_order' => $i++,
-            ])->id;
-        }
-
-        Photo::query()->truncate();
-        $photos = [
-            ['caption' => 'Mengaji Pagi', 'category' => 'harian'],
-            ['caption' => 'Bermain Edukatif', 'category' => 'kreativitas'],
-            ['caption' => 'Kreativitas & Mewarnai', 'category' => 'kreativitas'],
-            ['caption' => 'Senam & Motorik', 'category' => 'harian'],
-            ['caption' => 'Kegiatan Outdoor', 'category' => 'outdoor'],
-            ['caption' => 'Perayaan Hari Besar Islam', 'category' => 'perayaan'],
-            ['caption' => 'Praktik Kemandirian', 'category' => 'harian'],
-            ['caption' => 'Kunjungan Orang Tua', 'category' => 'perayaan'],
-            ['caption' => 'Bermain di Halaman', 'category' => 'outdoor'],
-            ['caption' => 'Bermain Musik Sederhana', 'category' => 'kreativitas'],
-            ['caption' => 'Makan Bersama', 'category' => 'harian'],
-            ['caption' => 'Wisuda Kelompok Bermain', 'category' => 'perayaan'],
-        ];
-        foreach ($photos as $i => $photo) {
-            Photo::query()->create([
-                'gallery_category_id' => $categoryIds[$photo['category']],
-                'image_path' => null,
-                'caption' => $photo['caption'],
-                'sort_order' => $i + 1,
-                'status' => 'published',
             ]);
         }
+
+        // Tidak ada foto contoh: galeri diisi lewat panel admin (upload
+        // gambar sungguhan). Placeholder tanpa gambar hanya menghasilkan
+        // kotak kosong di halaman publik.
     }
 
     private function seedArtikelContent(): void

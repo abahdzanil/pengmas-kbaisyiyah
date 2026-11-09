@@ -87,10 +87,43 @@ class PublicPagesTest extends TestCase
 
     public function test_draft_photo_is_hidden_from_gallery_page(): void
     {
-        $draft = Photo::query()->first();
-        $draft->update(['status' => 'draft', 'caption' => 'Foto Rahasia Draft']);
+        Photo::factory()->create([
+            'status' => 'draft',
+            'caption' => 'Foto Rahasia Draft',
+            'image_path' => 'ecms/image_path/draft.png',
+        ]);
 
         $this->get('/gallery')->assertDontSee('Foto Rahasia Draft');
+    }
+
+    public function test_gallery_photo_opens_in_a_lightbox(): void
+    {
+        $photo = Photo::factory()->create([
+            'status' => 'published',
+            'caption' => 'Kegiatan Mengaji Pagi',
+            'image_path' => 'ecms/image_path/mengaji.png',
+        ]);
+
+        $response = $this->get('/gallery');
+
+        $response->assertOk();
+        $response->assertSee('data-lightbox-src="/storage/'.$photo->image_path.'"', false);
+        $response->assertSee('data-lightbox-caption="Kegiatan Mengaji Pagi"', false);
+        $response->assertSee('id="galleryLightbox"', false);
+    }
+
+    public function test_a_photo_without_an_image_is_not_rendered(): void
+    {
+        // Placeholder rows (caption but no upload) used to render as empty
+        // boxes on the public page; they're filtered out at the query now.
+        Photo::factory()->create([
+            'status' => 'published',
+            'caption' => 'Placeholder Tanpa Gambar',
+            'image_path' => null,
+        ]);
+
+        $this->get('/gallery')->assertDontSee('Placeholder Tanpa Gambar');
+        $this->get('/')->assertDontSee('Placeholder Tanpa Gambar');
     }
 
     public function test_draft_feature_is_hidden_from_home_page(): void

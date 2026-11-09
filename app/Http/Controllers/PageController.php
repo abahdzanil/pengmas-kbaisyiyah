@@ -17,7 +17,7 @@ class PageController extends Controller
     {
         return view('pages.home', [
             'features' => Feature::published()->ordered()->get(),
-            'latestPhotos' => Photo::published()->ordered()->take(4)->get(),
+            'latestPhotos' => Photo::published()->ordered()->whereNotNull('image_path')->take(4)->get(),
         ]);
     }
 
@@ -55,7 +55,7 @@ class PageController extends Controller
     {
         return view('pages.gallery', [
             'categories' => GalleryCategory::query()->ordered()->get(),
-            'photos' => Photo::published()->ordered()->get(),
+            'photos' => Photo::published()->ordered()->whereNotNull('image_path')->get(),
         ]);
     }
 }

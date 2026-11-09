@@ -113,15 +113,11 @@
     </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      @foreach ($latestPhotos as $i => $photo)
-        <div class="aspect-square {{ $i % 2 === 0 ? 'bg-forest-100 border border-forest-200' : 'bg-sand-200 border border-sand-300' }} flex flex-col items-center justify-center gap-2 text-center px-4">
-          @if ($photo->image_path)
-            <img src="{{ Storage::url($photo->image_path) }}" alt="{{ $photo->caption }}" class="w-full h-full object-cover">
-          @else
-            <x-icon name="camera" :size="22" :stroke="$i % 2 === 0 ? '#2f5d40' : '#9c7838'" />
-            <p class="text-xs font-semibold {{ $i % 2 === 0 ? 'text-forest-700' : 'text-sand-700' }}">{{ $photo->caption }}</p>
-          @endif
-        </div>
+      @foreach ($latestPhotos as $photo)
+        <a href="{{ route('gallery') }}" class="group aspect-square overflow-hidden border border-sand-300 bg-sand-100 block">
+          <img src="{{ Storage::url($photo->image_path) }}" alt="{{ $photo->caption }}"
+            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+        </a>
       @endforeach
     </div>
   </div>
