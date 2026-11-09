@@ -47,6 +47,41 @@ class AdminBackendTest extends TestCase
         $response->assertSee('data-collection-manager', false);
     }
 
+    public function test_every_collection_with_an_image_field_renders_an_upload_control(): void
+    {
+        // The API side has always accepted an 'image' upload, so API tests
+        // passed while the form rendered no file input at all — gallery
+        // photos and article covers both shipped that way. This asserts the
+        // rendered form schema itself, which is where the gap was.
+        $this->seed(EcmsSeeder::class);
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $html = $this->actingAs($admin)->get('/admin')->assertOk()->getContent();
+
+        $withImages = collect(config('ecms.collections'))
+            ->filter(fn ($config) => ! empty($config['image_field']));
+
+        $this->assertNotEmpty($withImages, 'Expected at least one collection to declare an image_field.');
+
+        foreach ($withImages as $resource => $config) {
+            preg_match(
+                '/data-resource="'.preg_quote($resource, '/').'"(.*?)data-fields=\'(.*?)\'/s',
+                $html,
+                $matches
+            );
+
+            $this->assertNotEmpty($matches, "No collection manager rendered for [{$resource}].");
+
+            $fields = json_decode(htmlspecialchars_decode($matches[2], ENT_QUOTES), true);
+            $types = collect($fields)->pluck('type');
+
+            $this->assertTrue(
+                $types->contains('image'),
+                "Collection [{$resource}] declares image_field '{$config['image_field']}' but its form renders no image field (types: {$types->implode(', ')})."
+            );
+        }
+    }
+
     public function test_admin_can_update_single_instance_content(): void
     {
         $admin = User::factory()->create(['is_admin' => true]);

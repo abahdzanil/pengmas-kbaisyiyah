@@ -11,6 +11,7 @@
         'gallery_category_id' => 'Kategori', 'slug' => 'Slug (URL)', 'excerpt' => 'Ringkasan',
         'body' => 'Isi Artikel', 'published_at' => 'Tanggal Terbit', 'is_highlight' => 'Sorotan (Highlight)',
         'degree' => 'Jenjang / Gelar', 'institution' => 'Institusi', 'year' => 'Tahun',
+        'photo_path' => 'Foto', 'image_path' => 'Foto', 'cover_image' => 'Gambar Sampul',
     ];
     $resolveField = function ($field) use ($labelOverrides, &$resolveField) {
         // A field can set its own 'label' in config/ecms.php; otherwise fall
@@ -26,6 +27,18 @@
         return $field;
     };
     $fields = collect($config['fields'])->map($resolveField)->values();
+
+    // The upload control is derived from 'image_field' rather than needing a
+    // second, matching entry in 'fields' — that duplication was silently
+    // dropping the file input for collections where only one of the two was
+    // set (gallery photos and article covers both shipped without one).
+    if ($config['image_field'] && ! $fields->contains(fn ($field) => $field['type'] === 'image')) {
+        $fields->push($resolveField([
+            'name' => $config['image_field'],
+            'type' => 'image',
+            'rules' => [],
+        ]));
+    }
 @endphp
 <div
   data-collection-manager

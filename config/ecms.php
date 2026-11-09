@@ -20,6 +20,9 @@ use App\Models\StaffMember;
  *
  * Field shape: ['name' => string, 'type' => text|textarea|number|boolean|date|select|image|repeater, 'rules' => array, 'options' => ?callable]
  *
+ * 'image_field' alone is enough for an upload control — the admin form
+ * synthesizes the file input from it, so 'fields' needs no image entry.
+ *
  * 'repeater' is for a child hasMany relation edited inline in the parent's
  * own form (e.g. a staff member's education history) instead of as its own
  * top-level collection — it needs 'relation' (the parent's Eloquent hasMany
@@ -93,8 +96,8 @@ return [
                 ['name' => 'role', 'type' => 'text', 'rules' => ['required', 'string', 'max:120']],
                 // No 'initials' field here on purpose — it's only a fallback
                 // avatar for when no photo is set, auto-derived from name
-                // (StaffMember::booted()). Admin uploads a photo instead.
-                ['name' => 'photo', 'type' => 'image', 'rules' => []],
+                // (StaffMember::booted()). The photo upload control itself
+                // is rendered from 'image_field' above.
                 [
                     'name' => 'education_histories', 'type' => 'repeater', 'label' => 'Riwayat Pendidikan',
                     'relation' => 'educationHistories',

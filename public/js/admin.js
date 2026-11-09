@@ -352,7 +352,17 @@ document.addEventListener('DOMContentLoaded', function () {
       }).join('');
       control = '<select id="' + id + '" class="w-full border border-sand-300 bg-sand-50 px-4 py-3 text-sm"><option value="">&mdash;</option>' + opts + '</select>';
     } else if (field.type === 'image') {
-      control = '<input type="file" id="' + id + '" accept="image/jpeg,image/png,image/webp,image/gif" class="block w-full text-xs">' +
+      // A file input can't be pre-filled, so show the image already on the
+      // record — otherwise an empty input reads as "no image set".
+      var current = item && this.imageField ? item[this.imageField] : null;
+      control =
+        (current
+          ? '<div class="flex items-center gap-3 mb-2">' +
+            '<img src="/storage/' + current + '" class="w-16 h-16 object-cover border border-sand-300" alt="">' +
+            '<span class="text-[11px] text-ink/50">Gambar saat ini — pilih file baru untuk mengganti.</span>' +
+            '</div>'
+          : '') +
+        '<input type="file" id="' + id + '" accept="image/jpeg,image/png,image/webp,image/gif" class="block w-full text-xs">' +
         (this.imageHint ? '<p class="text-[11px] text-ink/50 mt-2">' + escapeHtml(this.imageHint) + '</p>' : '');
     } else {
       control = '<input type="text" id="' + id + '" value="' + escapeHtml(value) + '" class="w-full border border-sand-300 bg-sand-50 px-4 py-3 text-sm">';
