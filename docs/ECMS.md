@@ -159,6 +159,40 @@ are served from `storage/app/public` via the `public/storage` symlink
   enough to blunt scripted abuse).
 - **Mass assignment**: every model declares `#[Fillable([...])]` explicitly.
 
+## Email (SMTP) — notifikasi formulir Contact Us
+
+Submitting the public Contact Us form stores the message (visible under
+"Pesan Masuk") *and* emails the school. The recipient is the address in
+site_settings, editable under "Kelola Contact" — not a hardcoded value —
+and Reply-To is set to the visitor, so replying from the inbox reaches
+them directly.
+
+Fill these in `.env`, then set `MAIL_MAILER=smtp`:
+
+```
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com     # provider's SMTP host
+MAIL_PORT=587
+MAIL_USERNAME=alamat-pengirim@gmail.com
+MAIL_PASSWORD=app-password   # Gmail: an App Password, not the account password
+MAIL_FROM_ADDRESS="alamat-pengirim@gmail.com"   # Gmail requires this to match MAIL_USERNAME
+```
+
+`MAIL_MAILER=log` (the default while credentials are unset) writes the
+rendered email to `storage/logs/laravel.log` instead of sending — useful
+for checking the template without a real mailbox.
+
+A transport failure (wrong credentials, provider down) is caught and
+logged: the message is still saved and the visitor still gets the success
+message, because the enquiry is already safe in the database and a
+mail problem isn't something they can act on. Check
+`storage/logs/laravel.log` for "Gagal mengirim notifikasi pesan kontak"
+if mail silently isn't arriving.
+
+Note for tests: `Mail::fake()` does not render the mail template, so a
+broken mail view passes the suite. Verify the rendered output through the
+`log` mailer when changing `resources/views/mail/`.
+
 ## Default admin account
 
 Seeded by `EcmsSeeder`:

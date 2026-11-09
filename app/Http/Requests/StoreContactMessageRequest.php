@@ -18,6 +18,7 @@ class StoreContactMessageRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', 'max:150'],
             'phone' => ['required', 'string', 'max:30'],
             'message' => ['required', 'string', 'max:2000'],
         ];

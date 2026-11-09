@@ -105,6 +105,7 @@ class PublicPagesTest extends TestCase
     {
         $response = $this->post('/contact', [
             'name' => 'Wali Murid',
+            'email' => 'wali@example.com',
             'phone' => '0812-0000-0000',
             'message' => 'Saya ingin bertanya soal pendaftaran.',
         ]);
@@ -117,11 +118,11 @@ class PublicPagesTest extends TestCase
         ]);
     }
 
-    public function test_contact_form_requires_name_phone_and_message(): void
+    public function test_contact_form_requires_name_email_phone_and_message(): void
     {
         $response = $this->post('/contact', []);
 
-        $response->assertSessionHasErrors(['name', 'phone', 'message']);
+        $response->assertSessionHasErrors(['name', 'email', 'phone', 'message']);
         $this->assertSame(0, ContactMessage::query()->count());
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['name', 'phone', 'message', 'status'])]
+#[Fillable(['name', 'email', 'phone', 'message', 'status'])]
 class ContactMessage extends Model
 {
     /** @use HasFactory<ContactMessageFactory> */

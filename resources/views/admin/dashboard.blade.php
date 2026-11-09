@@ -276,12 +276,22 @@
                     <span class="bg-forest-700 text-sand-50 text-[10px] font-semibold uppercase px-2 py-0.5" data-badge-new>Baru</span>
                   @endif
                 </div>
-                <p class="text-xs text-ink/50 mb-3">{{ $message->phone }} &middot; {{ $message->created_at->translatedFormat('d M Y, H:i') }}</p>
+                <p class="text-xs text-ink/50 mb-3">
+                  @if ($message->email)
+                    <a href="mailto:{{ $message->email }}" class="text-forest-700 hover:text-forest-500 underline underline-offset-2">{{ $message->email }}</a>
+                    &middot;
+                  @endif
+                  {{ $message->phone }} &middot; {{ $message->created_at->translatedFormat('d M Y, H:i') }}
+                </p>
                 <p class="text-sm text-ink/70">{{ $message->message }}</p>
               </div>
               <div class="flex gap-2 shrink-0">
                 @if ($message->status === 'new')
                   <button type="button" data-message-read data-id="{{ $message->id }}" class="text-[11px] font-semibold uppercase tracking-wide border border-forest-700 text-forest-700 px-3 py-1.5">Tandai Dibaca</button>
+                @endif
+                @if ($message->email)
+                  <a href="mailto:{{ $message->email }}?subject={{ rawurlencode('Balasan dari '.$settings->site_name) }}"
+                    class="text-[11px] font-semibold uppercase tracking-wide border border-forest-700 text-forest-700 px-3 py-1.5">Balas Email</a>
                 @endif
                 <button type="button" data-message-delete data-id="{{ $message->id }}" class="text-[11px] font-semibold uppercase tracking-wide border border-sand-400 text-ink/60 px-3 py-1.5">Hapus</button>
               </div>

@@ -82,6 +82,12 @@
             @error('name') <p class="mt-2 text-xs text-red-700">{{ $message }}</p> @enderror
           </div>
           <div>
+            <label for="cf-email" class="block text-xs font-semibold uppercase tracking-wide text-forest-800 mb-2">Email</label>
+            <input id="cf-email" name="email" type="email" required value="{{ old('email') }}" placeholder="nama@email.com"
+              class="w-full border border-sand-300 bg-sand-50 px-4 py-3 text-sm focus:outline-none focus:border-forest-600">
+            @error('email') <p class="mt-2 text-xs text-red-700">{{ $message }}</p> @enderror
+          </div>
+          <div>
             <label for="cf-phone" class="block text-xs font-semibold uppercase tracking-wide text-forest-800 mb-2">No. WhatsApp</label>
             <input id="cf-phone" name="phone" type="tel" required value="{{ old('phone') }}" placeholder="08xx-xxxx-xxxx"
               class="w-full border border-sand-300 bg-sand-50 px-4 py-3 text-sm focus:outline-none focus:border-forest-600">
