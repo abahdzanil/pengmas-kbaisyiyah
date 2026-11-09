@@ -43,6 +43,7 @@
 <div
   data-collection-manager
   data-resource="{{ $resource }}"
+  data-label="{{ $config['label'] }}"
   data-label-field="{{ $config['label_field'] }}"
   data-has-status="{{ $config['has_status'] ? '1' : '0' }}"
   data-has-sort="{{ $config['has_sort'] ? '1' : '0' }}"
@@ -57,7 +58,28 @@
     </button>
   </div>
 
-  <div data-form-wrap class="hidden border border-sand-300 bg-white p-6 mb-6 space-y-4" data-fields-container></div>
+  {{-- Add/edit form, shown as a modal over the dashboard --}}
+  <div data-form-modal class="hidden fixed inset-0 z-50" role="dialog" aria-modal="true">
+    <div data-modal-backdrop class="absolute inset-0 bg-ink/50"></div>
+    <div class="relative h-full overflow-y-auto flex items-start sm:items-center justify-center p-4 sm:p-6">
+      <div class="relative w-full max-w-2xl bg-white border border-sand-300 shadow-xl my-4">
+        <div class="flex items-center justify-between gap-4 border-b border-sand-200 px-6 py-4">
+          <p data-modal-title class="text-[12px] font-semibold uppercase tracking-[0.18em] text-forest-800"></p>
+          <button type="button" data-action="close" aria-label="Tutup"
+            class="shrink-0 w-7 h-7 flex items-center justify-center text-ink/40 hover:text-forest-800 text-xl leading-none">&times;</button>
+        </div>
+
+        <div data-fields-container class="px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto"></div>
+
+        <div class="flex items-center gap-3 border-t border-sand-200 px-6 py-4">
+          <button type="button" data-action="submit"
+            class="bg-forest-700 hover:bg-forest-800 text-sand-50 text-xs font-semibold uppercase tracking-wide px-5 py-2.5"></button>
+          <button type="button" data-action="cancel"
+            class="text-xs font-semibold uppercase tracking-wide text-ink/50 hover:text-ink/80">Batal</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div data-list class="space-y-3">
     <p class="text-sm text-ink/40" data-loading>Memuat data&hellip;</p>

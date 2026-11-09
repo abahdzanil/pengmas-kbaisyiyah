@@ -226,15 +226,26 @@ document.addEventListener('DOMContentLoaded', function () {
     this.imageField = el.dataset.imageField || null;
     this.imageHint = el.dataset.imageHint || '';
     this.fields = JSON.parse(el.dataset.fields || '[]');
+    this.label = el.dataset.label || 'Item';
     this.listEl = el.querySelector('[data-list]');
-    this.formWrap = el.querySelector('[data-form-wrap]');
-    this.fieldsContainer = el.querySelector('[data-fields-container]');
+    this.modal = el.querySelector('[data-form-modal]');
+    this.modalTitle = this.modal.querySelector('[data-modal-title]');
+    this.fieldsContainer = this.modal.querySelector('[data-fields-container]');
+    this.submitBtn = this.modal.querySelector('[data-action="submit"]');
     this.items = [];
     this.editingId = null;
     this.loaded = false;
 
     var self = this;
     el.querySelector('[data-action="create"]').addEventListener('click', function () { self.openForm(null); });
+    this.submitBtn.addEventListener('click', function () { self.submit(); });
+    this.modal.querySelectorAll('[data-action="cancel"], [data-action="close"], [data-modal-backdrop]')
+      .forEach(function (closer) {
+        closer.addEventListener('click', function () { self.closeForm(); });
+      });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !self.modal.classList.contains('hidden')) self.closeForm();
+    });
   }
 
   CollectionManager.prototype.load = async function () {
@@ -315,18 +326,14 @@ document.addEventListener('DOMContentLoaded', function () {
       self.fieldsContainer.appendChild(self.renderField(field, item));
     });
 
-    var actions = document.createElement('div');
-    actions.className = 'flex items-center gap-3 pt-2';
-    actions.innerHTML =
-      '<button type="button" data-action="submit" class="bg-forest-700 hover:bg-forest-800 text-sand-50 text-xs font-semibold uppercase tracking-wide px-5 py-2.5">' +
-      (item ? 'Simpan' : 'Tambah') + '</button>' +
-      '<button type="button" data-action="cancel" class="text-xs font-semibold uppercase tracking-wide text-ink/50">Batal</button>';
-    this.fieldsContainer.appendChild(actions);
-    actions.querySelector('[data-action="submit"]').addEventListener('click', function () { self.submit(); });
-    actions.querySelector('[data-action="cancel"]').addEventListener('click', function () { self.closeForm(); });
+    this.modalTitle.textContent = (item ? 'Ubah ' : 'Tambah ') + this.label;
+    this.submitBtn.textContent = item ? 'Simpan' : 'Tambah';
 
-    this.formWrap.classList.remove('hidden');
-    this.formWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    this.modal.classList.remove('hidden');
+    // Keep the dashboard behind the modal from scrolling along with it.
+    document.body.classList.add('overflow-hidden');
+    var firstInput = this.fieldsContainer.querySelector('input, textarea, select');
+    if (firstInput) firstInput.focus();
   };
 
   CollectionManager.prototype.renderField = function (field, item) {
@@ -443,7 +450,8 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   CollectionManager.prototype.closeForm = function () {
-    this.formWrap.classList.add('hidden');
+    this.modal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
     this.fieldsContainer.innerHTML = '';
     this.editingId = null;
   };
