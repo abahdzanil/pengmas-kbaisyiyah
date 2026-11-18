@@ -18,6 +18,12 @@ class GalleryCategory extends Model
         return $this->hasMany(Photo::class);
     }
 
+    /** id => name pairs for the admin select (referenced from config/ecms.php). */
+    public static function selectOptions()
+    {
+        return static::query()->ordered()->pluck('name', 'id');
+    }
+
     public function scopeOrdered($query)
     {
         return $query->orderBy('sort_order');

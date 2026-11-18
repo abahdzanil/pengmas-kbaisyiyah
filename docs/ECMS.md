@@ -72,7 +72,7 @@ it finds, and image fields upload immediately on change.
            ['name' => 'title', 'type' => 'text', 'rules' => ['required', 'string', 'max:120']],
            ['name' => 'description', 'type' => 'textarea', 'rules' => ['required', 'string', 'max:500']],
            // type can be: text, textarea, richtext, boolean, date, select, image, repeater
-           // 'select' also needs 'options' => fn () => SomeModel::pluck('name', 'id'),
+           // 'select' also needs 'options_using' => [SomeModel::class, 'selectOptions'], (static method; no closures — they break config:cache)
            // 'repeater' is for a child hasMany edited inline — see below.
        ],
    ],

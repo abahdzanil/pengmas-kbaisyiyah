@@ -18,7 +18,10 @@ use App\Models\StaffMember;
  *   3. one entry here.
  * No changes to AdminCollectionController itself. See docs/ECMS.md.
  *
- * Field shape: ['name' => string, 'type' => text|textarea|number|boolean|date|select|image|repeater, 'rules' => array, 'options' => ?callable]
+ * Field shape: ['name' => string, 'type' => text|textarea|number|boolean|date|select|image|repeater, 'rules' => array, 'options' => ?array, 'options_using' => ?[Class, 'staticMethod']]
+ *
+ * Dynamic select options must use 'options_using' (a [class, method] pair),
+ * never a closure — closures break `php artisan config:cache` / `optimize`.
  *
  * 'image_field' alone is enough for an upload control — the admin form
  * synthesizes the file input from it, so 'fields' needs no image entry.
@@ -134,7 +137,7 @@ return [
                 ['name' => 'caption', 'type' => 'text', 'rules' => ['required', 'string', 'max:150']],
                 [
                     'name' => 'gallery_category_id', 'type' => 'select', 'rules' => ['nullable', 'exists:gallery_categories,id'],
-                    'options' => fn () => GalleryCategory::query()->ordered()->pluck('name', 'id'),
+                    'options_using' => [GalleryCategory::class, 'selectOptions'],
                 ],
             ],
         ],

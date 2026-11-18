@@ -17,8 +17,8 @@
         // A field can set its own 'label' in config/ecms.php; otherwise fall
         // back to the override dictionary, then a humanized column name.
         $field['label'] ??= $labelOverrides[$field['name']] ?? \Illuminate\Support\Str::headline($field['name']);
-        if (($field['options'] ?? null) instanceof \Closure) {
-            $field['options'] = $field['options']();
+        if (! empty($field['options_using'])) {
+            $field['options'] = call_user_func($field['options_using']);
         }
         if (! empty($field['child_fields'])) {
             $field['child_fields'] = collect($field['child_fields'])->map($resolveField)->values()->all();
